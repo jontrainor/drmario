@@ -1,13 +1,7 @@
 (function(window) {
-	colorDict = {
-		white: 'rgb(0,0,0)',
-		black: 'rgb(255,255,255)',
-		red: 'rgb(255,0,0)',
-		blue: 'rgb(0,0,255)',
-		yellow: 'rgb(255,255,0)'
-	};
-	var Block = function() {
-		this.initialize();
+	
+	var Block = function(ctx, x, y, color) {
+		this.initialize(ctx, x, y, color);
 	}
 	
 	var p = Block.prototype;
@@ -19,20 +13,32 @@
 	//private properties:
 		p._ctx = null;
 		p._color = null;
-		p._height = 50;
-		p._width = 50;
-		p._radius = 10;
+		p._height = 20;
+		p._width = 20;
+		p._radius = 8;
 		
 	//constructor:
-		p.initalize = function() {
-			//do nothing
+		p.initialize = function(ctx, x, y, color) {
+			this._ctx = ctx;
+			this.x = x;
+			this.y = y;
+			this._color = color;
 		}
 	
 	//public methods
-		p.draw = function(ctx, x, y, width, height, radius, color) {
-			ctx.strokeStyle = colorDict.black;
-			ctx.fillStyle = colorDict.color;
-		    ctx.beginPath();
+		p.draw = function() {
+			var ctx = this._ctx,
+				x = this.x,
+				y = this.y,
+				width = this._width,
+				height = this._height,
+				radius = this._radius,
+				color = this._color;
+			console.log(colorDict[color]);
+			
+			ctx.strokeStyle = colorDict['black'];
+			ctx.fillStyle = colorDict[color];
+		   	ctx.beginPath();
 		    ctx.moveTo(x + radius, y);
 			ctx.lineTo(x + width - radius, y);
 		    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
@@ -46,4 +52,6 @@
 			ctx.stroke();
 			ctx.fill();     
 		}
+		window.Block = Block;
+		console.log('Block.js initialized');
 }(window));
