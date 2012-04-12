@@ -15,16 +15,16 @@
 		p._ctx = null;
 		
 	//constructor
-		p.initialize(ctx, x, y, lColor, rColor) {
-/*			this._ctx = ctx;
+		p.initialize = function(ctx, x, y, lColor, rColor) {
+			this._ctx = ctx;
 			this.x = x;
 			this.y = y;
 			this.lBlock = new Block(ctx, x, y, lColor);
-			this.rBlock = new Block(ctx, x+20, y+20, rColor);
-*/		}
+			this.rBlock = new Block(ctx, x+20, y, rColor);
+		}
 
 	//public methods
-		p.draw() {
+		p.draw = function() {
 			this.lBlock.draw();
 			this.rBlock.draw();
 		}
