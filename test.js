@@ -9,6 +9,7 @@ window.onload = function() {
 		black: 'rgb(255,255,255)',
 		white: 'rgb(0,0,0)'
 	};
+	var testPill;
 		
 	function init() {
 		canvas.obj = document.getElementById("gameCanvas");
@@ -16,7 +17,7 @@ window.onload = function() {
 			canvas.ctx = canvas.obj.getContext("2d");
 		
 		}
-		var testBlock = Block(canvas.ctx, canvas.obj.width/2, canvas.obj.height/2, 'blue');
+		testPill = new Pill(canvas.ctx,canvas.obj.width/2,canvas.obj.height/2,'blue','yellow');
 	}
 	
 	function run() {
@@ -26,12 +27,13 @@ window.onload = function() {
 	}
 	
 	function update() {
-		testBlock.x = testBlock.x + 2;
+		testPill.lBlock.x = testPill.lBlock.x + 2;
+		testPill.rBlock.x = testPill.rBlock.x + 2;
 	}
 	
 	function draw() {
 		canvas.ctx.clearRect(0,0,canvas.obj.width,canvas.obj.height);
-		
+		testPill.draw();
 		/*
 		canvas.ctx.beginPath();
 		canvas.ctx.arc(player.x, player.y, player.r, 0, Math.PI*2, true);
