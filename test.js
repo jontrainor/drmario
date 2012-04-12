@@ -20,8 +20,12 @@ window.onload = function() {
 		up: false,
 		down: false,
 		a: false,
+<<<<<<< HEAD
 		s: false,
 		shouldMove: true
+=======
+		s: false
+>>>>>>> aafa1be43247b9e577a3ba838d7f703e65449094
 	};
 	window.onkeydown = function(e) {
 		switch (e.keyCode) {
@@ -85,6 +89,7 @@ window.onload = function() {
 	}
 	
 	function update() {
+<<<<<<< HEAD
 		if (keyPress.left && keyPress.shouldMove) { 
 			testPill.moveLeft();
 			keyPress.shouldMove = false;
@@ -99,6 +104,10 @@ window.onload = function() {
 	
 	function shouldntMove() {
 		keyPress.shouldMove = true;
+=======
+		if (keyPress.left) { testPill.moveLeft(playerSpeed); }
+		if (keyPress.right) { testPill.moveRight(playerSpeed); }
+>>>>>>> aafa1be43247b9e577a3ba838d7f703e65449094
 	}
 	
 	function draw() {
