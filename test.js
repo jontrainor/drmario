@@ -10,6 +10,64 @@ window.onload = function() {
 		white: 'rgb(0,0,0)'
 	};
 	var testPill;
+	var gameSpeed = 2,
+		playerSpeed = .1;
+	
+	//key events
+	var keyPress = {
+		left: false,
+		right: false,
+		up: false,
+		down: false,
+		a: false,
+		s: false,
+		shouldMove: true
+	};
+	window.onkeydown = function(e) {
+		switch (e.keyCode) {
+			case 37:
+				keyPress.left = true;
+				break;
+			case 38:
+				keyPress.up = true;
+				break;
+			case 39:
+				keyPress.right = true;
+				break;
+			case 40:
+				keyPress.down = true;
+				break;
+			case 65:
+				keyPress.a = true;
+				break;
+			case 83:
+				keyPress.s = true;
+				break;
+		}
+	}
+	
+	window.onkeyup = function(e) {
+		switch (e.keyCode) {
+			case 37:
+				keyPress.left = false;
+				break;
+			case 38:
+				keyPress.up = false;
+				break;
+			case 39:
+				keyPress.right = false;
+				break;
+			case 40:
+				keyPress.down = false;
+				break;
+			case 65:
+				keyPress.a = false;
+				break;
+			case 83:
+				keyPress.s = false;
+				break;
+		}
+	}
 		
 	function init() {
 		canvas.obj = document.getElementById("gameCanvas");
@@ -27,8 +85,20 @@ window.onload = function() {
 	}
 	
 	function update() {
-		testPill.lBlock.x = testPill.lBlock.x + 2;
-		testPill.rBlock.x = testPill.rBlock.x + 2;
+		if (keyPress.left && keyPress.shouldMove) { 
+			testPill.moveLeft();
+			keyPress.shouldMove = false;
+			setTimeout(shouldntMove, 500);
+		}
+		if (keyPress.right && keyPress.shouldMove) { 
+			testPill.moveRight(); 
+			keyPress.shouldMove = false;
+			setTimeout(shouldntMove, gameSpeed);
+		}
+	}
+	
+	function shouldntMove() {
+		keyPress.shouldMove = true;
 	}
 	
 	function draw() {
@@ -41,8 +111,6 @@ window.onload = function() {
 		canvas.ctx.closePath();
 		*/
 	}
-	
-
 	
 	function loop() {
 		update();

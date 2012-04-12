@@ -24,6 +24,16 @@
 		}
 
 	//public methods
+		p.moveLeft = function() {
+			this.lBlock.x = this.lBlock.x - 20;
+			this.rBlock.x = this.rBlock.x - 20;
+		}
+		
+		p.moveRight = function() {
+			this.rBlock.x = this.rBlock.x + 20;
+			this.lBlock.x = this.lBlock.x + 20;	
+		}
+		
 		p.draw = function() {
 			this.lBlock.draw();
 			this.rBlock.draw();
