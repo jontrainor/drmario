@@ -24,6 +24,22 @@
 		}
 
 	//public methods
+		p.moveLeft = function(playerSpeed) {
+			var _loops = 20/playerSpeed;
+			for (var i=0;i < _loops;i++) {
+				this.lBlock.x = this.lBlock.x - playerSpeed;
+				this.rBlock.x = this.rBlock.x - playerSpeed;
+			}
+		}
+		
+		p.moveRight = function(playerSpeed) {
+			var _loops = 20/playerSpeed;
+			for (var i=0;i < _loops;i++) {
+				this.rBlock.x = this.rBlock.x + playerSpeed;
+				this.lBlock.x = this.lBlock.x + playerSpeed;
+			}	
+		}
+		
 		p.draw = function() {
 			this.lBlock.draw();
 			this.rBlock.draw();
