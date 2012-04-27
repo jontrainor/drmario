@@ -1,15 +1,12 @@
 window.onload = function() {
 	//initialize objects
-	var canvas = {
-		obj: null,
-		ctx: null,
-		gameLoop: null
-	};
-	var color = {
-		black: 'rgb(255,255,255)',
-		white: 'rgb(0,0,0)'
-	};
-	var testPill;
+	var canvas = null;
+	var stage = null;
+	var screen_width = null;
+	var screen_hight = null;
+	var blockSpriteSheetAsset = new Image();
+	var blockSS = null;
+	var testPill = null;
 	var gameSpeed = 2,
 		playerSpeed = .1;
 	
@@ -20,14 +17,12 @@ window.onload = function() {
 		up: false,
 		down: false,
 		a: false,
-<<<<<<< HEAD
 		s: false,
-		shouldMove: true
-=======
+		shouldMove: true,
 		s: false
->>>>>>> aafa1be43247b9e577a3ba838d7f703e65449094
 	};
 	window.onkeydown = function(e) {
+		keyPress.shouldMove = true;
 		switch (e.keyCode) {
 			case 37:
 				keyPress.left = true;
@@ -71,62 +66,68 @@ window.onload = function() {
 				keyPress.s = false;
 				break;
 		}
-	}
-		
+	}		
 	function init() {
-		canvas.obj = document.getElementById("gameCanvas");
-		if (canvas.obj && canvas.obj.getContext) {
-			canvas.ctx = canvas.obj.getContext("2d");
+		canvas = document.getElementById("gameCanvas");
+
+		blockSpriteSheetAsset.onload = handleImageLoad;
+		blockSpriteSheetAsset.onerror = handleImageError;
+		blockSpriteSheetAsset.src = "assets/block.png";
+
+	}
+	
+	function handleImageLoad(e) {
+		console.log(e.target.src + " loaded")
+		startGame();
+	}
+	
+	function handleImageError(e) {
+		console.log("Error Loading Image : " + e.target.src);
+	}
+	
+	function startGame() {
 		
-		}
-		testPill = new Pill(canvas.ctx,canvas.obj.width/2,canvas.obj.height/2,'blue','yellow');
+		stage = new Stage(canvas);
+		screen_width = canvas.width;
+		screen_height = canvas.height;
+		
+		blockSS = new SpriteSheet({
+			images:[blockSpriteSheetAsset],
+			frames: {width:20, height:20, regX:10, regY:10, numFrames:6},
+			animations: {
+				red: [0],
+				yellow: [1],
+				blue: [2],
+				redVirus: [3],
+				yellowVirus: [4],
+				blueVirus: [5]
+			}
+		});
+		
+		testPill = new Pill(blockSS,300,300,"redVirus","blue");
+		stage.addChild(testPill.lBlock, testPill.rBlock);
+		stage.update();
+		
+		
+		Ticker.useRAF = true;
+		Ticker.setFPS(60);
+		Ticker.addListener(window);
 	}
 	
-	function run() {
-		if (canvas.ctx != null) {
-			canvas.gameLoop = setInterval(loop,50);
-		}
-	}
-	
-	function update() {
-<<<<<<< HEAD
-		if (keyPress.left && keyPress.shouldMove) { 
+	function tick() {
+		console.log("test");
+		if (keyPress.left && keyPress.shouldMove) {
 			testPill.moveLeft();
 			keyPress.shouldMove = false;
-			setTimeout(shouldntMove, 500);
 		}
-		if (keyPress.right && keyPress.shouldMove) { 
-			testPill.moveRight(); 
+		if (keyPress.right && keyPress.shouldMove) {
+			testPill.moveRight();
 			keyPress.shouldMove = false;
-			setTimeout(shouldntMove, gameSpeed);
 		}
+		stage.update();
 	}
 	
-	function shouldntMove() {
-		keyPress.shouldMove = true;
-=======
-		if (keyPress.left) { testPill.moveLeft(playerSpeed); }
-		if (keyPress.right) { testPill.moveRight(playerSpeed); }
->>>>>>> aafa1be43247b9e577a3ba838d7f703e65449094
-	}
-	
-	function draw() {
-		canvas.ctx.clearRect(0,0,canvas.obj.width,canvas.obj.height);
-		testPill.draw();
-		/*
-		canvas.ctx.beginPath();
-		canvas.ctx.arc(player.x, player.y, player.r, 0, Math.PI*2, true);
-		canvas.ctx.fill();
-		canvas.ctx.closePath();
-		*/
-	}
-	
-	function loop() {
-		update();
-		draw();
-	}
-	
+	window.tick = tick;
 	init();
-	run();
 
 };

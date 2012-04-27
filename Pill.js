@@ -1,30 +1,31 @@
 (function(window) {
-	var Pill = function(ctx, x, y, lColor, rColor) {
-		this.initialize(ctx, x, y, lColor, rColor);
+	var Pill = function(spriteSheet, x, y, lColor, rColor, n) {
+		this.initialize(spriteSheet, x, y, lColor, rColor, n);
 	}
 	
-	var p = Pill.prototype;
+	var p = Pill.prototype = new Container();
 	
 	//public properties
-		p.x = 0;
-		p.y = 0;
-		p.lBlock = null;
-		p.rBlock = null;
 		
 	//private properties
 		p._ctx = null;
 		
 	//constructor
-		p.initialize = function(ctx, x, y, lColor, rColor) {
-			this._ctx = ctx;
-			this.x = x;
-			this.y = y;
-			this.lBlock = new Block(ctx, x, y, lColor);
-			this.rBlock = new Block(ctx, x+20, y, rColor);
+		p.initialize = function(spriteSheet, x, y, lColor, rColor, n) {
+			var 
+			this.lBlock = new BitmapAnimation(spriteSheet);
+			this.lBlock.gotoAndStop(lColor);
+			this.lBlock.x = x;
+			this.lBlock.y = y;
+			
+			this.rBlock = new BitmapAnimation(spriteSheet);
+			this.rBlock.gotoAndStop(rColor);
+			this.rBlock.x = x + 20;
+			this.rBlock.y = y;
 		}
 
 	//public methods
-<<<<<<< HEAD
+		
 		p.moveLeft = function() {
 			this.lBlock.x = this.lBlock.x - 20;
 			this.rBlock.x = this.rBlock.x - 20;
@@ -32,28 +33,7 @@
 		
 		p.moveRight = function() {
 			this.rBlock.x = this.rBlock.x + 20;
-			this.lBlock.x = this.lBlock.x + 20;	
-=======
-		p.moveLeft = function(playerSpeed) {
-			var _loops = 20/playerSpeed;
-			for (var i=0;i < _loops;i++) {
-				this.lBlock.x = this.lBlock.x - playerSpeed;
-				this.rBlock.x = this.rBlock.x - playerSpeed;
-			}
-		}
-		
-		p.moveRight = function(playerSpeed) {
-			var _loops = 20/playerSpeed;
-			for (var i=0;i < _loops;i++) {
-				this.rBlock.x = this.rBlock.x + playerSpeed;
-				this.lBlock.x = this.lBlock.x + playerSpeed;
-			}	
->>>>>>> aafa1be43247b9e577a3ba838d7f703e65449094
-		}
-		
-		p.draw = function() {
-			this.lBlock.draw();
-			this.rBlock.draw();
+			this.lBlock.x = this.lBlock.x + 20;
 		}
 		
 	window.Pill = Pill;
