@@ -7,6 +7,7 @@ window.onload = function() {
 	var blockSpriteSheetAsset = new Image();
 	var blockSS = null;
 	var testPill = null;
+	var tempBorder = null;
 	var gameSpeed = 2,
 		playerSpeed = .1;
 	
@@ -19,6 +20,7 @@ window.onload = function() {
 		a: false,
 		s: false,
 		shouldMove: true,
+		shouldTurn: true,
 		s: false
 	};
 	window.onkeydown = function(e) {
@@ -37,9 +39,11 @@ window.onload = function() {
 				keyPress.down = true;
 				break;
 			case 65:
+				keyPress.shouldTurn = true;
 				keyPress.a = true;
 				break;
 			case 83:
+				keyPress.shouldTurn = true;
 				keyPress.s = true;
 				break;
 		}
@@ -103,11 +107,17 @@ window.onload = function() {
 				blueVirus: [5]
 			}
 		});
+		//create temp game border
+		var g = new Graphics();
+		g.beginStroke(Graphics.getRGB(0,0,0)).drawRect(0,0,200,400);
+		tempBorder = new Shape(g);
+		tempBorder.x = 220;
+		tempBorder.y = 140;
 		
-		testPill = new Pill(blockSS,300,300,"redVirus","blue");
-		stage.addChild(testPill.lBlock, testPill.rBlock);
+		//create test pill
+		testPill = new Pill(blockSS,310,130,"redVirus","blue");
+		stage.addChild(tempBorder,testPill);
 		stage.update();
-		
 		
 		Ticker.useRAF = true;
 		Ticker.setFPS(60);
@@ -115,16 +125,33 @@ window.onload = function() {
 	}
 	
 	function tick() {
-		console.log("test");
-		if (keyPress.left && keyPress.shouldMove) {
-			testPill.moveLeft();
-			keyPress.shouldMove = false;
+		//pill moving/turning logic
+		if (keyPress.shouldMove) {
+			if (keyPress.left && !testPill.isLeftBorder()) {
+				testPill.moveLeft();
+				keyPress.shouldMove = false;
+			}
+			if (keyPress.right && !testPill.isRightBorder()) {
+				testPill.moveRight();
+				keyPress.shouldMove = false;
+			}
+			if (keyPress.down) {
+				testPill.moveDown();
+				keyPress.shouldMove = false;
+			}
 		}
-		if (keyPress.right && keyPress.shouldMove) {
-			testPill.moveRight();
-			keyPress.shouldMove = false;
+		if (keyPress.shouldTurn) {
+			if (keyPress.s) {
+				testPill.turnCW();
+				keyPress.shouldTurn = false;
+			}
+			if (keyPress.a) {
+				testPill.turnCCW();
+				keyPress.shouldTurn = false;
+			}
 		}
 		stage.update();
+		console.log(testPill.x + ', ' + testPill.y);
 	}
 	
 	window.tick = tick;

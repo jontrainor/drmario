@@ -1,17 +1,17 @@
 (function(window) {
-	var Grid = function() {
+	var Grid = function(level) {
 		this.initialize();
 	}
 	
-	var p = Pill.prototype;
+	var p = Grid.prototype;
 	
 	//public properties
-		
+		p.gameArray = [];
 	//private properties
 		
 	//constructor
-		p.initialize = function() {
-
+		p.initialize = function(level) {
+			
 		}
 
 	//public methods
