@@ -30,19 +30,24 @@
 			this.rotation += 90;	
 			switch (this.direction) {
 				case 'down':
-					this.x += gGridSpace;
 					this.y -= gGridSpace;
 					this.direction = 'right';
 					break;
 				case 'right':
+					if (this.x != 370) {
+						this.x += gGridSpace;
+					}
 					this.y += gGridSpace;
 					this.direction = 'up';
 					break;
 				case 'up':
+					this.x -= gGridSpace;
 					this.direction = 'left';
 					break;
 				case 'left':
-					this.x -= gGridSpace;
+					if (this.x == 370) {
+						this.x -= gGridSpace;
+					}
 					this.direction = 'down';
 					break;
 			}
@@ -55,7 +60,9 @@
 					this.direction = 'left';
 					break;
 				case 'left':
-					this.x += gGridSpace;
+					if (this.x != 370) {
+						this.x += gGridSpace;
+					}
 					this.direction = 'up';
 					break;
 				case 'up':
@@ -64,6 +71,9 @@
 					this.direction = 'right';
 					break;
 				case 'right':
+					if (this.x == 370) {
+						this.x -= gGridSpace;
+					}
 					this.y += gGridSpace;
 					this.direction = 'down';
 					break;
@@ -90,7 +100,7 @@
 		}
 		
 		p.isRightBorder = function() {
-			if ((this.direction != 'down' && this.x >= 410) || (this.direction == 'down') && this.x >= 390) {
+			if ((this.direction != 'down' && this.x >= 370) || (this.direction == 'down') && this.x >= 350) {
 				return true;
 			}
 			return false;

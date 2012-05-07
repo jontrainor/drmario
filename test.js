@@ -7,6 +7,7 @@ window.onload = function() {
 	var blockSpriteSheetAsset = new Image();
 	var blockSS = null;
 	var testPill = null;
+	var testGrid = null;
 	var tempBorder = null;
 	var gameSpeed = 2,
 		playerSpeed = .1;
@@ -109,13 +110,19 @@ window.onload = function() {
 		});
 		//create temp game border
 		var g = new Graphics();
-		g.beginStroke(Graphics.getRGB(0,0,0)).drawRect(0,0,200,400);
+		g.beginStroke(Graphics.getRGB(0,0,0)).drawRect(0,0,160,320);
 		tempBorder = new Shape(g);
 		tempBorder.x = 220;
 		tempBorder.y = 140;
+
+		//create grid
+		testGrid = new Grid(230,150,10);
+		testGrid.initViruses(10,blockSS,stage);
+		stage.addChild(testGrid);
+		stage.update();
 		
 		//create test pill
-		testPill = new Pill(blockSS,310,130,"redVirus","blue");
+		testPill = new Pill(blockSS,310,130,"red","blue");
 		stage.addChild(tempBorder,testPill);
 		stage.update();
 		
@@ -151,7 +158,7 @@ window.onload = function() {
 			}
 		}
 		stage.update();
-		console.log(testPill.x + ', ' + testPill.y);
+		//console.log(testPill.x + ', ' + testPill.y);
 	}
 	
 	window.tick = tick;
