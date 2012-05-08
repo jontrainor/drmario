@@ -67,11 +67,30 @@
 			for ( i = 0; i < numOfViruses; i++ ) {
 				virusIndex = Math.floor(Math.random()*Grid.virusArray.length);
 				x = Math.floor(Math.random()*this._maxX);
-				y = Math.floor(Math.random()*(this._maxY - 4) + 4);
+				y = Math.floor(Math.random()*(this._maxY - 3) + 3s);
 				console.log(virusIndex,x,y);
 				console.log(Grid.virusArray[virusIndex]);
 
 				var varName = 'virus' + i;
+				var emptyGridSpace = false;
+				while ( !emptyGridSpace ) {
+					if ( this.gameArray[x][y] != ' ' ) {
+						if ( x == 7 ) {
+							x = 0;
+							y == 15 ? y = 3 : y++;
+							console.log('right wall');
+						}
+						
+						else {
+							console.log('x++');
+							x++;
+						}
+					}
+
+					else {
+						emptyGridSpace = true;
+					}
+				}
 				this.gameArray[x][y] = Grid.virusArray[virusIndex];
 				this.viruses.varName = new BitmapAnimation(ss);
 				this.viruses.varName.x = this.getX(x);

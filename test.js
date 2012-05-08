@@ -116,13 +116,13 @@ window.onload = function() {
 		tempBorder.y = 140;
 
 		//create grid
-		testGrid = new Grid(230,150,10);
-		testGrid.initViruses(10,blockSS,stage);
+		testGrid = new Grid(230,150);
+		testGrid.initViruses(10,blockSS);
 		stage.addChild(testGrid);
 		stage.update();
 		
 		//create test pill
-		testPill = new Pill(blockSS,310,130,"red","blue");
+		testPill = new Pill(blockSS,290,130,"red","blue");
 		stage.addChild(tempBorder,testPill);
 		stage.update();
 		
