@@ -38,9 +38,26 @@
 		}
 
 	//public methods
+		p.getInitX = function() {
+			return this._initX;
+		}
+
+		p.getInitY = function() {
+			return this._initY;
+		}
+
+		p.getMaxX = function() {
+			return this._maxX;
+		}
+
+		p.getMaxY = function() {
+			return this._maxY;
+		}
+
 		p.getGridValue = function(x,y) {
-			var ix = x/getGridValue - this._initX - 1,
-				iy = y/getGridValue - this._initY - 1;
+			var ix = (x - this._initX)/gGridSpace;
+			var	iy = (y - this._initY)/gGridSpace;
+			//console.log(ix + ', ' + iy)
 			return this.gameArray[ix][iy];
 		}
 
@@ -67,9 +84,9 @@
 			for ( i = 0; i < numOfViruses; i++ ) {
 				virusIndex = Math.floor(Math.random()*Grid.virusArray.length);
 				x = Math.floor(Math.random()*this._maxX);
-				y = Math.floor(Math.random()*(this._maxY - 3) + 3s);
-				console.log(virusIndex,x,y);
-				console.log(Grid.virusArray[virusIndex]);
+				y = Math.floor(Math.random()*(this._maxY - 3) + 3);
+//				console.log(virusIndex,x,y);
+//				console.log(Grid.virusArray[virusIndex]);
 
 				var varName = 'virus' + i;
 				var emptyGridSpace = false;
@@ -80,7 +97,7 @@
 							y == 15 ? y = 3 : y++;
 							console.log('right wall');
 						}
-						
+
 						else {
 							console.log('x++');
 							x++;
@@ -91,6 +108,7 @@
 						emptyGridSpace = true;
 					}
 				}
+
 				this.gameArray[x][y] = Grid.virusArray[virusIndex];
 				this.viruses.varName = new BitmapAnimation(ss);
 				this.viruses.varName.x = this.getX(x);
@@ -100,6 +118,16 @@
 			}
 		}
 
+		//for testing
+		p.print = function() {
+			for ( var y = 0; y < this._maxY; y++ ) {
+				var str = ( this.gameArray[0][y] == ' ' ? 'empty' : this.gameArray[0][y] ) + ' ';
+				for ( var x = 1; x < this._maxX; x++ ) {
+					str = str.concat( ( this.gameArray[x][y] == ' ' ? 'empty' : this.gameArray[x][y] ) + ' ' );
+				}
+				console.log(str);
+			}
+		}
 	window.Grid = Grid;
 	console.log('Grid.js initialized');
 }(window));

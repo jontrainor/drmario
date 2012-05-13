@@ -117,12 +117,13 @@ window.onload = function() {
 
 		//create grid
 		testGrid = new Grid(230,150);
-		testGrid.initViruses(10,blockSS);
+		testGrid.initViruses(0,blockSS);
 		stage.addChild(testGrid);
 		stage.update();
+		testGrid.print();
 		
 		//create test pill
-		testPill = new Pill(blockSS,290,130,"red","blue");
+		testPill = new Pill(blockSS,290,150,"red","blue");
 		stage.addChild(tempBorder,testPill);
 		stage.update();
 		
@@ -133,29 +134,36 @@ window.onload = function() {
 	
 	function tick() {
 		//pill moving/turning logic
-		if (keyPress.shouldMove) {
-			if (keyPress.left && !testPill.isLeftBorder()) {
-				testPill.moveLeft();
-				keyPress.shouldMove = false;
+		//console.log(testGrid.getGridValue(testPill.x, testPill.y));
+		if (testPill.canMoveDown(testGrid)) {
+			if (keyPress.shouldMove) {
+				if (keyPress.left && !testPill.isLeftBorder()) {
+					testPill.moveLeft();
+					keyPress.shouldMove = false;
+				}
+				if (keyPress.right && !testPill.isRightBorder()) {
+					testPill.moveRight();
+					keyPress.shouldMove = false;
+				}
+				if (keyPress.down) {
+					testPill.moveDown();
+					keyPress.shouldMove = false;
+				}
 			}
-			if (keyPress.right && !testPill.isRightBorder()) {
-				testPill.moveRight();
-				keyPress.shouldMove = false;
-			}
-			if (keyPress.down) {
-				testPill.moveDown();
-				keyPress.shouldMove = false;
+			if (keyPress.shouldTurn) {
+				if (keyPress.s) {
+					testPill.turnCW();
+					keyPress.shouldTurn = false;
+				}
+				if (keyPress.a) {
+					testPill.turnCCW();
+					keyPress.shouldTurn = false;
+				}
 			}
 		}
-		if (keyPress.shouldTurn) {
-			if (keyPress.s) {
-				testPill.turnCW();
-				keyPress.shouldTurn = false;
-			}
-			if (keyPress.a) {
-				testPill.turnCCW();
-				keyPress.shouldTurn = false;
-			}
+
+		else {
+
 		}
 		stage.update();
 		//console.log(testPill.x + ', ' + testPill.y);

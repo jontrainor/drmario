@@ -105,6 +105,51 @@
 			}
 			return false;
 		}
+
+		p.canMoveDown = function(grid) {
+			var x = this.x;
+			var y = this.y + gGridSpace;
+			var maxY = grid.getInitY() * grid.getMaxY();
+
+			if ( y > maxY ) {
+				return false;
+			}
+
+			switch (this.direction) {
+				case 'down':
+					if (grid.getGridValue( x, y ) == ' ' && grid.getGridValue( x + gGridSpace, y ) == ' ') {
+						return true;
+					} 
+					else {
+						return false;
+					}
+				case 'left':
+					if (grid.getGridValue( x, y ) == ' ') {
+						return true;
+					}
+					else {
+						return false;
+					}
+				case 'up':
+					if (grid.getGridValue( x, y ) == ' ' && grid.getGridValue( x - gGridSpace, y ) == ' ') {
+						return true;
+					}
+					else {
+						return false;
+					}
+				case 'right':
+					if ( y == maxY ) {
+						return false;
+					}
+
+					if (grid.getGridValue( x, y + gGridSpace ) == ' ') {
+						return true;
+					}
+					else {
+						return false;
+					}
+			}
+		}
 		
 	window.Pill = Pill;
 	console.log('Pill.js initialized');
