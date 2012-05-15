@@ -5,13 +5,14 @@
 	
 	var p = Grid.prototype = new Container();
 	//static properties
-		Grid.virusArray = ['redVirus','yellowVirus','blueVirus'];
+		Grid.virusArray = ['red_virus','yellow_virus','blue_virus'];
 		Grid.blockArray = ['red','yellow','blue'];
 	
 	//public properties
 		p.gameArray = [];
 		p.coorDict = {};
 		p.viruses = {};
+		p.numOfPills = null;
 
 	//private properties
 		p._initX = null;
@@ -23,6 +24,7 @@
 		p.initialize = function(initX,initY) {
 			this.x = 0;
 			this.y = 0;
+			this.numOfPills = 0;
 			this._initX = initX;
 			this._initY = initY;
 			this._maxX = 8;
@@ -54,19 +56,6 @@
 			return this._maxY;
 		}
 
-		p.getGridValue = function(x,y) {
-			var ix = (x - this._initX)/gGridSpace;
-			var	iy = (y - this._initY)/gGridSpace;
-			//console.log(ix + ', ' + iy)
-			return this.gameArray[ix][iy];
-		}
-
-		p.setGridValue = function(x,y,value) {
-			var ix = x/this._initX,
-				iy = y/this._initY;
-			this.gameArray[ix][iy] = value;
-		}
-
 		p.getX = function(ix) {
 			return this._initX + ix*gGridSpace;
 		}
@@ -75,7 +64,21 @@
 			return this._initY + iy*gGridSpace;
 		}
 
-		p.initViruses = function(level, ss) {
+		p.getGridValue = function(x,y) {
+			var ix = (x - this._initX)/gGridSpace;
+			var	iy = (y - this._initY)/gGridSpace;
+			//console.log(ix + ', ' + iy)
+			return this.gameArray[ix][iy];
+		}
+
+		p.setGridValue = function(x,y,value) {
+			var ix = (x - this._initX)/gGridSpace;
+			var	iy = (y - this._initY)/gGridSpace;
+			this.gameArray[ix][iy] = value;
+		}
+
+		p.initViruses = function(l, ss) {
+			var level = l <= 20 ? l : 20;
 			var numOfViruses = level*4 + 4,
 				virusIndex,
 				i,
@@ -127,6 +130,7 @@
 				}
 				console.log(str);
 			}
+			console.log(' ');
 		}
 	window.Grid = Grid;
 	console.log('Grid.js initialized');
