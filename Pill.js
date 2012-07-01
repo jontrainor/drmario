@@ -48,6 +48,10 @@
 		p.turnCW = function(grid) {
 			var initX = grid.getInitX();
 			this.rotation += 90;	
+			//exception for turing when pill is at it's initial position
+			if ( this.x == Grid.getInitY && (this.direction == 'down' || this.direction == 'up') )  {
+				this.moveDown();
+			}
 
 			switch (this.direction) {
 				case 'down':
@@ -77,6 +81,10 @@
 		p.turnCCW = function(grid) {
 			var initX = grid.getInitX();
 			this.rotation -= 90;
+			//exception for turing when pill is at it's initial position
+			if ( this.x == Grid.getInitY && (this.direction == 'down' || this.direction == 'up') )  {
+				this.moveDown();
+			}
 
 			switch (this.direction) {
 				case 'down':
@@ -106,11 +114,11 @@
 		p.canTurnCW = function(grid) {
 			var x = this.x;
 			var y = this.y;
-			
+			/*
 			if(!grid.getGridValue( x, y - gGridSpace)) {
 				return false;
 			}
-
+			*/
 			switch (this.direction) {
 				case 'down':
 					return (grid.getGridValue( x, y - gGridSpace ) == ' ') ? true : false;
@@ -126,11 +134,11 @@
 		p.canTurnCCW = function(grid) {
 			var x = this.x;
 			var y = this.y;
-
+			/*
 			if(!grid.getGridValue( x, y - gGridSpace)) {
 				return false;
 			}
-			
+			*/
 			switch (this.direction) {
 				case 'down':
 					return (grid.getGridValue( x, y - gGridSpace ) == ' ') ? true : false;
@@ -158,7 +166,7 @@
 		p.canMoveDown = function(grid) {
 			var x = this.x;
 			var y = this.y + gGridSpace;
-			var maxY = grid.getInitY() * grid.getMaxY();
+			var maxY = grid.getInitY() + gGridSpace * (grid.getMaxY() - 1);
 
 			if ( y > maxY ) {
 				return false;

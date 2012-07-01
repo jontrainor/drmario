@@ -137,6 +137,12 @@ window.onload = function() {
 		var checkAgain = testGrid.dropBlocks();
 		testGrid.print();
 		stage.update();
+		var blocksToDestroy = testGrid.checkBlocks();
+		if ( blocksToDestroy.length > 0 ) {
+			testGrid.destroyBlocks( blocksToDestroy );
+			testGrid.print();
+			stage.update();
+		}
 		checkAgain ? window.setTimeout(mainDropBlocks, 500) : continueLoop = true;
 	}
 	
@@ -178,6 +184,7 @@ window.onload = function() {
 				stage.addChild(testPill);
 				var blocksToDestroy = testGrid.checkBlocks();
 				if ( blocksToDestroy.length > 0 ) {
+					console.log(blocksToDestroy);
 					testGrid.destroyBlocks( blocksToDestroy );
 					testGrid.print();
 					stage.update();
