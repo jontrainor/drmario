@@ -9,8 +9,9 @@ window.onload = function() {
 	var testPill = null;
 	var testGrid = null;
 	var tempBorder = null;
-	var gameSpeed = 2,
-		playerSpeed = .1;
+	var gameSpeed = 2;
+	var	playerSpeed = .1;
+	var continueLoop = true;
 	
 	//key events
 	var keyPress = {
@@ -131,48 +132,66 @@ window.onload = function() {
 		Ticker.setFPS(60);
 		Ticker.addListener(window);
 	}
+
+	function mainDropBlocks() {
+		var checkAgain = testGrid.dropBlocks();
+		testGrid.print();
+		stage.update();
+		checkAgain ? window.setTimeout(mainDropBlocks, 500) : continueLoop = true;
+	}
 	
 	function tick() {
 		//pill moving/turning logic
 		//console.log(testGrid.getGridValue(testPill.x, testPill.y));
-		if (testPill.canMoveDown(testGrid)) {
-			if (keyPress.shouldMove) {
-				if (keyPress.left && testPill.canMoveLeft(testGrid)) {
-					testPill.moveLeft();
-					keyPress.shouldMove = false;
+		if (continueLoop) {
+			if (testPill.canMoveDown(testGrid)) {
+				if (keyPress.shouldMove) {
+					if (keyPress.left && testPill.canMoveLeft(testGrid)) {
+						testPill.moveLeft();
+						keyPress.shouldMove = false;
+					}
+					if (keyPress.right && testPill.canMoveRight(testGrid)) {
+						testPill.moveRight();
+						keyPress.shouldMove = false;
+					}
+					if (keyPress.down) {
+						testPill.moveDown();
+						keyPress.shouldMove = false;
+					}
 				}
-				if (keyPress.right && testPill.canMoveRight(testGrid)) {
-					testPill.moveRight();
-					keyPress.shouldMove = false;
-				}
-				if (keyPress.down) {
-					testPill.moveDown();
-					keyPress.shouldMove = false;
+				if (keyPress.shouldTurn) {
+					if (keyPress.s && testPill.canTurnCW(testGrid)) {
+						testPill.turnCW(testGrid);
+						keyPress.shouldTurn = false;
+					}
+					if (keyPress.a && testPill.canTurnCCW(testGrid)) {
+						testPill.turnCCW(testGrid);
+						keyPress.shouldTurn = false;
+					}
 				}
 			}
-			if (keyPress.shouldTurn) {
-				if (keyPress.s && testPill.canTurnCW(testGrid)) {
-					testPill.turnCW(testGrid);
-					keyPress.shouldTurn = false;
-				}
-				if (keyPress.a && testPill.canTurnCCW(testGrid)) {
-					testPill.turnCCW(testGrid);
-					keyPress.shouldTurn = false;
-				}
-			}
-		}
 
-		else {
-			var writePill = testPill.writeToGrid(testGrid);
-			stage.addChild(writePill);
-			testPill.x = 290;
-			testPill.y = 150;
+			else {
+				testPill.writeToGrid(testGrid, stage);
+				testGrid.print();
+				testPill = new Pill(blockSS,290,150,"red","blue");
+				stage.addChild(testPill);
+				var blocksToDestroy = testGrid.checkBlocks();
+				if ( blocksToDestroy.length > 0 ) {
+					testGrid.destroyBlocks( blocksToDestroy );
+					testGrid.print();
+					stage.update();
+
+					continueLoop = false;
+					window.setTimeout(mainDropBlocks, 500);
+				}
+			}
+			stage.update();
+			//console.log(testPill.x + ', ' + testPill.y);
 		}
-		stage.update();
-		//console.log(testPill.x + ', ' + testPill.y);
 	}
 	
 	window.tick = tick;
 	init();
 
-};
+}

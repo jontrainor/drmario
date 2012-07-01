@@ -106,6 +106,10 @@
 		p.canTurnCW = function(grid) {
 			var x = this.x;
 			var y = this.y;
+			
+			if(!grid.getGridValue( x, y - gGridSpace)) {
+				return false;
+			}
 
 			switch (this.direction) {
 				case 'down':
@@ -122,6 +126,10 @@
 		p.canTurnCCW = function(grid) {
 			var x = this.x;
 			var y = this.y;
+
+			if(!grid.getGridValue( x, y - gGridSpace)) {
+				return false;
+			}
 			
 			switch (this.direction) {
 				case 'down':
@@ -253,39 +261,53 @@
 			}
 		}
 
-		p.writeToGrid = function(grid) {
+		p.writeToGrid = function(grid, stage) {
 			var x = this.x;
 			var y = this.y;
+			var otherBlockX = null;
+			var otherBlockY = null;
 			/*
 			var lBlockIndex = this.getChildIndex( 'lBlock' );
 			var rBlockIndex = this.getChildIndex( 'rBlock' );
 			console.log(lBlockIndex)
 			console.log(rBlockIndex)
 			*/
-			var lColorStr = this.getChildAt(0).currentAnimation + '_' + 'Pill' + grid.numOfPills;
-			var rColorStr = this.getChildAt(1).currentAnimation + '_' + 'Pill' + grid.numOfPills;
+			var lColorStr = this.getChildAt(0).currentAnimation + '_' + 'pill' + grid.numOfPills + '_0';
+			var rColorStr = this.getChildAt(1).currentAnimation + '_' + 'pill' + grid.numOfPills + '_1';
 
 			switch (this.direction) {
 				case 'down':
-					grid.setGridValue( x, y, lColorStr );
-					grid.setGridValue( x + gGridSpace, y, rColorStr );
+					otherBlockX = x + gGridSpace;
+					otherBlockY = y;
 					break;
 				case 'left':
-					grid.setGridValue( x, y, lColorStr );
-					grid.setGridValue( x, y - gGridSpace, rColorStr );
+					otherBlockX = x;
+					otherBlockY = y - gGridSpace;
 					break;
 				case 'up':
-					grid.setGridValue( x, y, lColorStr );
-					grid.setGridValue( x - gGridSpace, y, rColorStr );
+					otherBlockX = x - gGridSpace;
+					otherBlockY = y;
 					break;
 				case 'right':
-					grid.setGridValue( x, y, lColorStr );
-					grid.setGridValue( x, y + gGridSpace, rColorStr );
+					otherBlockX = x;
+					otherBlockY = y + gGridSpace;
 					break;
 			}
+			var block0 = this.getChildAt(0);
+			block0.x = x;
+			block0.y = y;
+
+			var block1 = this.getChildAt(1);
+			block1.x = otherBlockX;
+			block1.y = otherBlockY;
+
+			grid.setGridValue( x, y, lColorStr );
+			grid.setGridValue( otherBlockX, otherBlockY, rColorStr );
+			grid.setGridAsset( x, y, block0 );
+			grid.setGridAsset( otherBlockX, otherBlockY, block1 );
+			stage.addChild( block0, block1 );
+			stage.removeChild(this);
 			grid.numOfPills++;
-			grid.print();
-			return this.clone(true);
 		}
 		
 	window.Pill = Pill;

@@ -34,10 +34,37 @@
 				this.gameArray[i] = [];
 				for ( var j = 0; j < this._maxY; j++ ) {
 					//initialize the gameArray
-					this.gameArray[i][j] = ' ';
+					this.gameArray[i][j] = {'value':' ', 'asset': null};
 				}
 			}
 		}
+	//static methods
+		Grid.stripColor = function(str) {
+			var re = /[a-z]+_?/;
+			var results = re.exec(str);
+			return results ? results[0] : ' ';
+		}
+
+		Grid.stripPillNumber = function(str) {
+			var re = /[0-9]+(?=_)/;
+			var results = re.exec(str);
+			return results ? results[0] : ' ';
+		}
+
+		Grid.stripBlockIndex = function(str) {
+			return str[-1];
+		}
+
+		Grid.stripVirusIndex = function(str) {
+			return str[-1];
+		}
+
+		Grid.isVirus = function(str) {
+			var re = /_[a-z]+/;
+			var result = re.exec(str);
+			return (!result || result[0] != '_virus') ? false : true;
+		}
+
 
 	//public methods
 		p.getInitX = function() {
@@ -68,14 +95,33 @@
 			var ix = (x - this._initX)/gGridSpace;
 			var	iy = (y - this._initY)/gGridSpace;
 			//console.log(ix + ', ' + iy)
-			return this.gameArray[ix][iy];
+			return this.gameArray[ix][iy].value ? this.gameArray[ix][iy].value : false;
 		}
 
 		p.setGridValue = function(x,y,value) {
 			var ix = (x - this._initX)/gGridSpace;
 			var	iy = (y - this._initY)/gGridSpace;
-			this.gameArray[ix][iy] = value;
+			if (!this.gameArray[ix][iy].value) {
+				return false;
+			}
+			this.gameArray[ix][iy].value = value;
 		}
+
+		p.getGridAsset = function(x,y) {
+			var ix = (x - this._initX)/gGridSpace;
+			var	iy = (y - this._initY)/gGridSpace;
+			return this.gameArray[ix][iy].asset ? this.gameArray[ix][iy].asset : false;
+		}
+
+		p.setGridAsset = function(x,y,asset) {
+			var ix = (x - this._initX)/gGridSpace;
+			var	iy = (y - this._initY)/gGridSpace;
+			if (!this.gameArray[ix][iy].value) {
+				return false;
+			}
+			this.gameArray[ix][iy].asset = asset;
+		}
+
 
 		p.initViruses = function(l, ss) {
 			var level = l <= 20 ? l : 20;
@@ -94,7 +140,7 @@
 				var varName = 'virus' + i;
 				var emptyGridSpace = false;
 				while ( !emptyGridSpace ) {
-					if ( this.gameArray[x][y] != ' ' ) {
+					if ( this.gameArray[x][y].value != ' ' ) {
 						if ( x == 7 ) {
 							x = 0;
 							y == 15 ? y = 3 : y++;
@@ -112,21 +158,138 @@
 					}
 				}
 
-				this.gameArray[x][y] = Grid.virusArray[virusIndex];
 				this.viruses.varName = new BitmapAnimation(ss);
 				this.viruses.varName.x = this.getX(x);
 				this.viruses.varName.y = this.getY(y);
 				this.viruses.varName.gotoAndStop(Grid.virusArray[virusIndex]);
+				this.gameArray[x][y].value = Grid.virusArray[virusIndex] + '_' + virusIndex;
+				this.gameArray[x][y].asset = this.viruses.varName;
 				this.addChild(this.viruses.varName);
 			}
+		}
+
+		p.checkBlocks = function() {
+			var currentColor = null;
+			var compareColor = null;
+			var matchingBlocks = [];
+			var blocksToDestroy = [];
+			var colors = [];
+
+			for ( var x = 0; x < this._maxX; x++ ) {
+				matchingBlocks = [];
+				for ( var y = 0; y < this._maxY; y++ ) {
+
+					if ( this.gameArray[x][y].value != ' ' ) {
+						compareColor = Grid.stripColor( this.gameArray[x][y].value );
+
+						if ( currentColor == null || currentColor != compareColor ) {
+							currentColor = compareColor;
+							matchingBlocks = [{ 'x': x, 'y': y, 'name': this.gameArray[x][y.value] }];
+						}
+						else {
+							matchingBlocks.push({ 'x': x, 'y': y, 'name': this.gameArray[x][y].value });
+						}
+					}
+
+					else {
+						currentColor = null;
+					}
+
+					if ( matchingBlocks.length == 4 ) {
+						for ( var i = 0; i < matchingBlocks.length; i++ ) {
+							blocksToDestroy.push( matchingBlocks[i] );
+						}
+						colors.push( Grid.stripColor( matchingBlocks[0].name ) );
+						matchingBlocks = [];
+					}
+				}
+			}
+			return blocksToDestroy;
+			if ( blocksToDestroy.length > 0 ) {
+				this.destroyBlocks( blocksToDestroy );
+				this.print();
+				this.dropBlocks();
+				this.print();
+			}
+		}
+
+		p.destroyBlocks = function(blocks) {
+			for ( var i = 0; i < blocks.length; i++ ) {
+				//set grid space to ' '
+				this.gameArray[blocks[i].x][blocks[i].y].value = ' ';
+				
+				//set block to not visible
+				//console.log(this.gameArray[blocks[i].x][blocks[i].y]);
+				this.gameArray[blocks[i].x][blocks[i].y].asset.visible = false;
+			}
+		}
+
+		p.dropBlocks = function() {
+			checkAgain = false;
+			for ( var y = this._maxY - 1; y > 0; y-- ) {
+				for (var x = 0; x < this._maxX; x++ ) {
+					var thisBlock = this.gameArray[x][y];
+					var aboveBlock = this.gameArray[x][y-1];
+					//for each blank space, see if there is a block above it that should fall down
+					if (thisBlock.value == ' ' && aboveBlock.value != ' '  && !Grid.isVirus( aboveBlock.value )) {
+						var leftBlock = x <= 0 ? false : this.gameArray[x-1][y-1];
+						var rightBlock = x + 1 >= this._maxX ? false : this.gameArray[x+1][y-1];
+						var pillIndex = Grid.stripPillNumber ( aboveBlock.value );
+						//check left and right of block for other side of pill
+						if ( !leftBlock || Grid.stripPillNumber( leftBlock.value ) != pillIndex ) {
+							if ( !rightBlock || Grid.stripPillNumber( rightBlock.value) != pillIndex ) {
+								//if neither the left or right side drop block down
+								checkAgain = true;
+								this.dropBlock(x, y-1);
+								//check if other side of pill is above
+								if ( Grid.stripPillNumber(this.gameArray[x][y-2].value) == pillIndex ) {
+									checkAgain = true;
+									this.dropBlock(x, y-2);
+								}
+							}
+							else {
+								//check under right side to see if the whole pill can drop
+								if ( this.gameArray[x+1][y].value == ' ' ) {
+									checkAgain = true;
+									this.dropBlock(x, y-1);
+									this.dropBlock(x+1, y-1);
+								}
+							}
+						}
+						else {
+							//check under left side to see if the whole pill can drop
+							if ( this.gameArray[x-1][y].value == ' ' ) {
+								checkAgain = true;
+								this.dropBlock(x, y-1);
+								this.dropBlock(x-1, y-1);
+							}
+						}
+
+					}
+
+				}
+			}
+			return checkAgain;
+		}
+
+		p.dropBlock = function(x,y) {
+			//drop block down
+			this.gameArray[x][y+1].value = this.gameArray[x][y].value;
+			console.log(this.gameArray[x][y].asset);
+			this.gameArray[x][y].asset.y += gGridSpace;
+			this.gameArray[x][y+1].asset = this.gameArray[x][y].asset;
+			//clear block
+			this.gameArray[x][y].asset = null;
+			this.gameArray[x][y].value = ' ';
+			this.print();
 		}
 
 		//for testing
 		p.print = function() {
 			for ( var y = 0; y < this._maxY; y++ ) {
-				var str = ( this.gameArray[0][y] == ' ' ? 'empty' : this.gameArray[0][y] ) + ' ';
+				var str = ( this.gameArray[0][y].value == ' ' ? 'empty' : this.gameArray[0][y].value ) + ' ';
 				for ( var x = 1; x < this._maxX; x++ ) {
-					str = str.concat( ( this.gameArray[x][y] == ' ' ? 'empty' : this.gameArray[x][y] ) + ' ' );
+					str = str.concat( ( this.gameArray[x][y].value == ' ' ? 'empty' : this.gameArray[x][y].value ) + ' ' );
 				}
 				console.log(str);
 			}

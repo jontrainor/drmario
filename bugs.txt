@@ -1,0 +1,3 @@
+errors when turning pill at origin point
+when turning from vertical to horizontal against a pill it does not behave the same way as when it's against the wall
+writes to grid AS SOON as the pill gest to it's lowest point (should only write at the gamespeed)
