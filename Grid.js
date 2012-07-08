@@ -11,7 +11,7 @@
 	//public properties
 		p.gameArray = [];
 		p.coorDict = {};
-		p.viruses = {};
+		p.viruses = [];
 		p.numOfPills = null;
 
 	//private properties
@@ -65,6 +65,9 @@
 			return (!result || result[0] != '_virus') ? false : true;
 		}
 
+		Grid.randomColor = function() {
+			return Grid.blockArray[Math.floor( Math.random() * Grid.blockArray.length )];
+		}
 
 	//public methods
 		p.getInitX = function() {
@@ -164,14 +167,26 @@
 					}
 				}
 
-				this.viruses.varName = new BitmapAnimation(ss);
-				this.viruses.varName.x = this.getX(x);
-				this.viruses.varName.y = this.getY(y);
-				this.viruses.varName.gotoAndStop(Grid.virusArray[virusIndex]);
+				this.viruses[i] = new BitmapAnimation(ss);
+				this.viruses[i].x = this.getX(x);
+				this.viruses[i].y = this.getY(y);
+				this.viruses[i].gotoAndStop(Grid.virusArray[virusIndex]);
 				this.gameArray[x][y].value = Grid.virusArray[virusIndex] + '_' + virusIndex;
-				this.gameArray[x][y].asset = this.viruses.varName;
-				this.addChild(this.viruses.varName);
+				this.gameArray[x][y].asset = this.viruses[i];
+				this.addChild(this.viruses[i]);
 			}
+		}
+
+		p.countViruses = function() {
+			var virusCount = 0;
+			for ( var y = 0; y < this._maxY; y++ ) {
+				for ( var x = 0; x < this._maxX; x++ ) {
+					if ( Grid.isVirus(this.gameArray[x][y].value) ) {
+						virusCount++;
+					}
+				}
+			}
+			return virusCount;
 		}
 
 		p.checkBlocksColumns = function() {
@@ -288,7 +303,6 @@
 				this.gameArray[blocks[i].x][blocks[i].y].value = ' ';
 				
 				//set block to not visible
-				//console.log(this.gameArray[blocks[i].x][blocks[i].y]);
 				this.gameArray[blocks[i].x][blocks[i].y].asset.visible = false;
 			}
 		}
@@ -311,7 +325,7 @@
 								checkAgain = true;
 								this.dropBlock(x, y-1);
 								//check if other side of pill is above
-								if ( Grid.stripPillNumber(this.gameArray[x][y-2].value) == pillIndex ) {
+								if ( y - 2 >= 0 && Grid.stripPillNumber(this.gameArray[x][y-2].value) == pillIndex ) {
 									checkAgain = true;
 									this.dropBlock(x, y-2);
 								}

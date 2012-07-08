@@ -1,3 +1,4 @@
-errors when turning pill at origin point
 when turning from vertical to horizontal against a pill it does not behave the same way as when it's against the wall
-writes to grid AS SOON as the pill gest to it's lowest point (should only write at the gamespeed)
+lower levels should have viruses lower on the screen
+manually moving a pill down should reset the timeout (so there is a proper amount of delay)
+there should be a proper amount of delay when blocks are destroyed during dropBlocks function

@@ -1,4 +1,7 @@
-window.onload = function() {
+$(function() {
+	//set focus to canvas
+	$('#gameCanvas').focus();
+
 	//initialize objects
 	var canvas = null;
 	var stage = null;
@@ -9,10 +12,10 @@ window.onload = function() {
 	var testPill = null;
 	var testGrid = null;
 	var tempBorder = null;
-	var gameSpeed = 2;
-	var	playerSpeed = .1;
+	var gameSpeed = 1000;
 	var continueLoop = true;
-	
+
+
 	//key events
 	var keyPress = {
 		left: false,
@@ -50,7 +53,7 @@ window.onload = function() {
 				break;
 		}
 	}
-	
+
 	window.onkeyup = function(e) {
 		switch (e.keyCode) {
 			case 37:
@@ -72,7 +75,7 @@ window.onload = function() {
 				keyPress.s = false;
 				break;
 		}
-	}		
+	}
 	function init() {
 		canvas = document.getElementById("gameCanvas");
 
@@ -81,22 +84,22 @@ window.onload = function() {
 		blockSpriteSheetAsset.src = "assets/block.png";
 
 	}
-	
+
 	function handleImageLoad(e) {
 		console.log(e.target.src + " loaded")
 		startGame();
 	}
-	
+
 	function handleImageError(e) {
 		console.log("Error Loading Image : " + e.target.src);
 	}
-	
+
 	function startGame() {
-		
+
 		stage = new Stage(canvas);
 		screen_width = canvas.width;
 		screen_height = canvas.height;
-		
+
 		blockSS = new SpriteSheet({
 			images:[blockSpriteSheetAsset],
 			frames: {width:20, height:20, regX:10, regY:10, numFrames:6},
@@ -122,18 +125,67 @@ window.onload = function() {
 		stage.addChild(testGrid);
 		stage.update();
 		testGrid.print();
-		
+
 		//create test pill
-		testPill = new Pill(blockSS,290,150,"red","blue");
+		testPill = new Pill(blockSS,290,130,Grid.randomColor(),Grid.randomColor());
 		stage.addChild(tempBorder,testPill);
 		stage.update();
-		
+
 		Ticker.useRAF = true;
 		Ticker.setFPS(60);
 		Ticker.addListener(window);
+
+		//start pill falling
+		window.setTimeout(movePill, gameSpeed);
+	}
+
+	function movePill() {
+		if (continueLoop) {
+			if (testPill.canMoveDown(testGrid)) {
+				testPill.moveDown();
+			}
+			else {
+				//check if the pill is above the top of the container
+				if( testPill.y == 130 || (testPill.direction == 'left' && testPill.y == 150) ) {
+					gameOver();
+				}
+				else {
+					//write pill to grid
+					testPill.writeToGrid(testGrid, stage);
+					stage.update();
+					testGrid.print();
+
+					//create new pill
+					testPill = new Pill(blockSS, 290, 130, Grid.randomColor(), Grid.randomColor());
+					stage.addChild(testPill);
+					var blocksToDestroy = testGrid.checkBlocks();
+					if ( blocksToDestroy.length > 0 ) {
+						continueLoop = false;
+						window.setTimeout(destroyBlocks(blocksToDestroy), gameSpeed);
+						return;
+					}
+				}
+			}
+			window.setTimeout(movePill, gameSpeed);
+		}
+	}
+
+	function destroyBlocks(blocksToDestroy) {
+		testGrid.destroyBlocks( blocksToDestroy );
+		testGrid.print();
+		stage.update();
+
+		//check if there are still viruses
+		if ( testGrid.countViruses() <= 0 ) {
+			gameOver();
+			return;
+		}
+
+		window.setTimeout(mainDropBlocks, gameSpeed * 0.8);
 	}
 
 	function mainDropBlocks() {
+
 		var checkAgain = testGrid.dropBlocks();
 		testGrid.print();
 		stage.update();
@@ -142,28 +194,49 @@ window.onload = function() {
 			testGrid.destroyBlocks( blocksToDestroy );
 			testGrid.print();
 			stage.update();
+
+			//check if there are still viruses
+		if ( testGrid.countViruses() <= 0 ) {
+			gameOver();
+			return;
 		}
-		checkAgain ? window.setTimeout(mainDropBlocks, 500) : continueLoop = true;
+
+		}
+		if (checkAgain) {
+			window.setTimeout(mainDropBlocks, gameSpeed * 0.8);
+		}
+		else {
+			continueLoop = true;
+			movePill();
+		}
 	}
-	
+
+	function gameOver() {
+		Ticker.setPaused(true);
+		var gameOverText = new Text("GAME OVER", "36px bold Helvetica", "#000");
+		gameOverText.x = screen_width/3;
+		gameOverText.y = screen_height/2;
+		stage.addChild(gameOverText);
+		stage.update();
+	}
+
 	function tick() {
 		//pill moving/turning logic
-		//console.log(testGrid.getGridValue(testPill.x, testPill.y));
 		if (continueLoop) {
-			if (testPill.canMoveDown(testGrid)) {
-				if (keyPress.shouldMove) {
-					if (keyPress.left && testPill.canMoveLeft(testGrid)) {
-						testPill.moveLeft();
-						keyPress.shouldMove = false;
-					}
-					if (keyPress.right && testPill.canMoveRight(testGrid)) {
-						testPill.moveRight();
-						keyPress.shouldMove = false;
-					}
+			if (keyPress.shouldMove) {
+				if (testPill.canMoveDown(testGrid)) {
 					if (keyPress.down) {
 						testPill.moveDown();
 						keyPress.shouldMove = false;
 					}
+				}
+				if (keyPress.left && testPill.canMoveLeft(testGrid)) {
+					testPill.moveLeft();
+					keyPress.shouldMove = false;
+				}
+				if (keyPress.right && testPill.canMoveRight(testGrid)) {
+					testPill.moveRight();
+					keyPress.shouldMove = false;
 				}
 				if (keyPress.shouldTurn) {
 					if (keyPress.s && testPill.canTurnCW(testGrid)) {
@@ -176,29 +249,12 @@ window.onload = function() {
 					}
 				}
 			}
-
-			else {
-				testPill.writeToGrid(testGrid, stage);
-				testGrid.print();
-				testPill = new Pill(blockSS,290,150,"red","blue");
-				stage.addChild(testPill);
-				var blocksToDestroy = testGrid.checkBlocks();
-				if ( blocksToDestroy.length > 0 ) {
-					console.log(blocksToDestroy);
-					testGrid.destroyBlocks( blocksToDestroy );
-					testGrid.print();
-					stage.update();
-
-					continueLoop = false;
-					window.setTimeout(mainDropBlocks, 500);
-				}
-			}
-			stage.update();
-			//console.log(testPill.x + ', ' + testPill.y);
 		}
+		stage.update();
+		//console.log(testPill.x + ', ' + testPill.y);
 	}
-	
+
 	window.tick = tick;
 	init();
 
-}
+});

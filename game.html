@@ -2,10 +2,11 @@
 <html lang="en">
 	<head>
 		<link rel="stylesheet" href="main.css">
-		
+
 		<script>
 		var gGridSpace = 20;
 		</script>
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
 		<script src="http://code.createjs.com/easeljs-0.4.2.min.js"></script>
 		<script src="Grid.js"></script>
 		<!-- <script src="Block.js"></script> -->
@@ -13,21 +14,24 @@
 		<script src="drmario.js"></script>
 	</head>
 	<body>
-		<header>
-			<h1>Dr Mario</h1>
-		</header>
-		<nav>
-			<ul>
-				<li><a href="/">Home</a></li>
-				<li><a href="#">#</a></li>
-		</nav>
-		<div id="game">
-			<canvas id="gameCanvas" width="600" height="600"></canvas>
+		<div id="wrapper">
+			<div id="info">
+				<h2>Dr. Trainor V0.1</h2>
+				<p>a clone of a popular NES game</p>
+				<div id="controls">
+					<p>use arrow keys to move</p>
+					<p>a = turn clockwise</p>
+					<p>s = turn counterclockwise</p>
+				</div>
+				<ul>
+					<li><a href="https://github.com/jontrainor/javascript-game">github</a></li>
+				</ul>
+			</div>
+			<nav></nav>
+			<div id="gameWrapper">
+				<canvas id="gameCanvas" width="600" height="600" tabindex="1"></canvas>
+			</div>
+			<footer></footer>
 		</div>
-		<footer>
-			<p>
-				&copy; 
-			</p>
-		</footer>
 	</body>
 </html>
