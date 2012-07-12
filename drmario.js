@@ -15,6 +15,9 @@ $(function() {
 	var gameSpeed = 1000;
 	var continueLoop = true;
 
+	var currentTime = null;
+	var checkTime = null;
+
 
 	//key events
 	var keyPress = {
@@ -136,7 +139,8 @@ $(function() {
 		Ticker.addListener(window);
 
 		//start pill falling
-		window.setTimeout(movePill, gameSpeed);
+		checkTime = Date.now();
+		//window.setTimeout(movePill, gameSpeed);
 	}
 
 	function movePill() {
@@ -166,7 +170,8 @@ $(function() {
 					}
 				}
 			}
-			window.setTimeout(movePill, gameSpeed);
+			checkTime = Date.now();
+			//window.setTimeout(movePill, gameSpeed);
 		}
 	}
 
@@ -207,7 +212,7 @@ $(function() {
 		}
 		else {
 			continueLoop = true;
-			movePill();
+			checkTime = Date.now();
 		}
 	}
 
@@ -221,14 +226,20 @@ $(function() {
 	}
 
 	function tick() {
+		//check pill should be forced down
+		currentTime = Date.now();
+		if ( currentTime - checkTime >= gameSpeed ) {
+			movePill();
+			return;
+		}
+
 		//pill moving/turning logic
 		if (continueLoop) {
 			if (keyPress.shouldMove) {
-				if (testPill.canMoveDown(testGrid)) {
-					if (keyPress.down) {
-						testPill.moveDown();
-						keyPress.shouldMove = false;
-					}
+				if (testPill.canMoveDown(testGrid) && keyPress.down) {
+					testPill.moveDown();
+					checkTime = Date.now();
+					keyPress.shouldMove = false;
 				}
 				if (keyPress.left && testPill.canMoveLeft(testGrid)) {
 					testPill.moveLeft();

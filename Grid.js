@@ -2,12 +2,12 @@
 	var Grid = function(initX,initY) {
 		this.initialize(initX,initY);
 	}
-	
+
 	var p = Grid.prototype = new Container();
 	//static properties
 		Grid.virusArray = ['red_virus','yellow_virus','blue_virus'];
 		Grid.blockArray = ['red','yellow','blue'];
-	
+
 	//public properties
 		p.gameArray = [];
 		p.coorDict = {};
@@ -19,7 +19,7 @@
 		p._initY = null;
 		p._maxX = null;
 		p._maxY = null;
-		
+
 	//constructor
 		p.initialize = function(initX,initY) {
 			this.x = 0;
@@ -288,7 +288,7 @@
 				for (var j = 0; j < blocksToDestroy.length; j++) {
 					if ( blocksToDestroyRow[i] == blocksToDestroy[j] ) {
 						flag = true
-					}	
+					}
 				}
 				if ( !flag ) {
 					blocksToDestroy.push(blocksToDestroyRow[i]);
@@ -301,7 +301,7 @@
 			for ( var i = 0; i < blocks.length; i++ ) {
 				//set grid space to ' '
 				this.gameArray[blocks[i].x][blocks[i].y].value = ' ';
-				
+
 				//set block to not visible
 				this.gameArray[blocks[i].x][blocks[i].y].asset.visible = false;
 			}
