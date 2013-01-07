@@ -1,6 +1,6 @@
 $(function() {
 	//set focus to canvas
-	$('#gameCanvas').focus();
+	$('.gameCanvas').focus();
 
 	//initialize objects
 	var canvas = null;
@@ -29,7 +29,7 @@ $(function() {
 		s: false,
 		shouldMove: true,
 		shouldTurn: true,
-		s: false
+		s: false,
 	};
 	window.onkeydown = function(e) {
 		keyPress.shouldMove = true;
@@ -53,6 +53,10 @@ $(function() {
 			case 83:
 				keyPress.shouldTurn = true;
 				keyPress.s = true;
+				break;
+			//keypress 'p'
+			case 80:
+				pause();
 				break;
 		}
 	}
@@ -79,8 +83,33 @@ $(function() {
 				break;
 		}
 	}
+
+	//start button
+	$('.startButton').click(start);
+
+	//pause button
+	$('.pauseButton').click(pause);
+
+	function start() {
+		$('.startButton').unbind('click');
+		$('.startButton p').html('GAME STARTED');
+		startGame();
+	}
+
+	function pause() {
+		if (!Ticker.getPaused()) {
+			Ticker.setPaused(true);
+			$('.pauseButton p').html('PAUSED');
+		}
+		else {
+			Ticker.setPaused(false);
+			$('.pauseButton p').html('PAUSE');
+		}
+	}
+
 	function init() {
-		canvas = document.getElementById("gameCanvas");
+		//retrieves an array of all elements with this class
+		canvas = $('.gameCanvas')[0];
 
 		blockSpriteSheetAsset.onload = handleImageLoad;
 		blockSpriteSheetAsset.onerror = handleImageError;
@@ -89,16 +118,15 @@ $(function() {
 	}
 
 	function handleImageLoad(e) {
-		console.log(e.target.src + " loaded")
-		startGame();
+		console.log(e.target.src + " loaded");
+		generateGame();
 	}
 
 	function handleImageError(e) {
 		console.log("Error Loading Image : " + e.target.src);
 	}
 
-	function startGame() {
-
+	function generateGame() {
 		stage = new Stage(canvas);
 		screen_width = canvas.width;
 		screen_height = canvas.height;
@@ -125,13 +153,16 @@ $(function() {
 		//create grid
 		testGrid = new Grid(230,150);
 		testGrid.initViruses(0,blockSS);
-		stage.addChild(testGrid);
+		stage.addChild(testGrid, tempBorder);
 		stage.update();
 		testGrid.print();
+	}
+
+	function startGame() {
 
 		//create test pill
 		testPill = new Pill(blockSS,290,130,Grid.randomColor(),Grid.randomColor());
-		stage.addChild(tempBorder,testPill);
+		stage.addChild(testPill);
 		stage.update();
 
 		Ticker.useRAF = true;

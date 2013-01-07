@@ -14,22 +14,29 @@
 		<script src="drmario.js"></script>
 	</head>
 	<body>
-		<div id="wrapper">
-			<div id="info">
-				<h2>Dr. Trainor V0.1</h2>
+		<div class="wrapper">
+			<div class="info">
+				<h2>Dr. Mario V0.1</h2>
 				<p>a clone of a popular NES game</p>
-				<div id="controls">
+				<div class="controls">
 					<p>use arrow keys to move</p>
 					<p>a = turn clockwise</p>
 					<p>s = turn counterclockwise</p>
+					<p>p = pause</p>
+					<div class="startButton button">
+						<p>START GAME</p>
+					</div>
+					<div class="pauseButton button">
+						<p>PAUSE</p>
+					</div>
 				</div>
 				<ul>
 					<li><a href="https://github.com/jontrainor/javascript-game">github</a></li>
 				</ul>
 			</div>
 			<nav></nav>
-			<div id="gameWrapper">
-				<canvas id="gameCanvas" width="600" height="600" tabindex="1"></canvas>
+			<div class="gameWrapper">
+				<canvas class="gameCanvas" width="600" height="600" tabindex="1"></canvas>
 			</div>
 			<footer></footer>
 		</div>
