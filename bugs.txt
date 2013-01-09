@@ -2,3 +2,4 @@ when turning from vertical to horizontal against a pill it does not behave the s
 lower levels should have viruses lower on the screen
 manually moving a pill down should reset the timeout (so there is a proper amount of delay)
 there should be a proper amount of delay when blocks are destroyed during dropBlocks function
+the grid should not check for matches until all blocks have fallen

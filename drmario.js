@@ -14,6 +14,7 @@ $(function() {
 	var tempBorder = null;
 	var gameSpeed = 1000;
 	var continueLoop = true;
+	var level = 0;
 
 	var currentTime = null;
 	var checkTime = null;
@@ -149,21 +150,24 @@ $(function() {
 		tempBorder = new Shape(g);
 		tempBorder.x = 220;
 		tempBorder.y = 140;
-
-		//create grid
-		testGrid = new Grid(230,150);
-		testGrid.initViruses(0,blockSS);
-		stage.addChild(testGrid, tempBorder);
+		stage.addChild(tempBorder);
 		stage.update();
-		testGrid.print();
 	}
 
 	function startGame() {
+		//get level
+		level = parseInt($('.levelSelect option:selected').val());
+		console.log('level is ' + $('.levelSelect option:selected').val());
+
+		//create grid
+		testGrid = new Grid(230,150);
+		testGrid.initViruses(level,blockSS);
 
 		//create test pill
 		testPill = new Pill(blockSS,290,130,Grid.randomColor(),Grid.randomColor());
-		stage.addChild(testPill);
+		stage.addChild(testGrid, testPill);
 		stage.update();
+		testGrid.print();
 
 		Ticker.useRAF = true;
 		Ticker.setFPS(60);
